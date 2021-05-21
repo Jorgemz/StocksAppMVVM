@@ -9,10 +9,8 @@ import SwiftUI
 
 struct AddStockScreen: View {
     
-    @State private var symbol: String = ""
-    @State private var title: String = ""
-    @State private var price: String = ""
-    @State private var quantity: String = ""
+  @State private var addStockVS = AddStockViewState()
+  @StateObject private var addStockVM: AddStockViewModel = AddStockViewModel()
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -20,17 +18,19 @@ struct AddStockScreen: View {
         
         Form {
             
-            TextField("Enter symbol", text: $symbol)
-            TextField("Enter title", text: $title)
-            TextField("Enter price", text: $price)
-            TextField("Enter quantity", text: $quantity)
+          TextField("Enter symbol", text: $addStockVS.symbol)
+          TextField("Enter title", text: $addStockVS.title)
+          TextField("Enter price", text: $addStockVS.price)
+          TextField("Enter quantity", text: $addStockVS.quantity)
             
             HStack {
                 Spacer()
                 Button("Save") {
                 
                     // save the stock
-                    
+                  addStockVM.addStock(addStockVS) {
+                    presentationMode.wrappedValue.dismiss()
+                  }
                 }
                 Spacer()
             }

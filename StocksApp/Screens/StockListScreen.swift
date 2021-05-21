@@ -11,27 +11,31 @@ struct StockListScreen: View {
     
     @State private var isPresented = false
     @State private var selectedStock: StockViewModel?
+  
+  @StateObject var stockListVM = StockListViewModel()
     
     let stocks = ["SEARS", "GMSP", "APLE", "BLBUS", "ENRON"]
     
     var body: some View {
         
         VStack {
+          
+          Text("\(stockListVM.portfolioBalance.formatAsCurrency())")
             
-            List(stocks, id: \.self) { stock in
+          List(stockListVM.stocks, id: \.id) { stock in
                 
                 NavigationLink(
                     destination: Text("Show stock news"),
                     label: {
                         HStack {
                             VStack(alignment: .leading) {
-                                Text(stock)
+                              Text(stock.symbol)
                                     .fontWeight(.bold)
-                                Text("stock name")
+                              Text(stock.title)
                             }
                             
                             Spacer()
-                            Text("$\(Double.random(in: 20...200))")
+                          Text(stock.marketValue.formatAsCurrency())
                         }
                     })
                 
@@ -39,7 +43,7 @@ struct StockListScreen: View {
                 
             }.listStyle(PlainListStyle())
             
-            /* COVERED LATER IN THE SESSION 
+            /* COVERED LATER IN THE SESSION
             if let selectedStock = selectedStock {
                 NavigationLink(
                     destination: StockArticleListScreen(stock: selectedStock),
@@ -61,12 +65,14 @@ struct StockListScreen: View {
         
         .sheet(isPresented: $isPresented, onDismiss: {
             // get all stocks
-            
+          stockListVM.getAllStocks()
+          
         }, content: {
             AddStockScreen()
         })
         .onAppear(perform: {
             // get all stocks
+          stockListVM.getAllStocks()
         })
         
     }
